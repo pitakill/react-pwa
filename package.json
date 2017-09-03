@@ -2,14 +2,18 @@
   "name": "react-pwa",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://pitakill.github.io/react-pwa",
   "dependencies": {
     "flow-bin": "^0.54.0",
+    "gh-pages": "^1.0.0",
     "google-map-react": "^0.24.0",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-scripts": "1.0.12"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "flow": "flow",
     "start": "react-scripts start",
     "build": "react-scripts build",
