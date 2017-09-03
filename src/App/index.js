@@ -2,6 +2,9 @@
 import React from 'react';
 import Map from '../Map';
 import {
+  BASE_URL_STATIONS,
+  //BASE_URL_STATIONS_STATUS,
+  BASE_URL_TOKEN,
   DETAIL_ZOOM as zoom,
   DEFAULT_LAT as lat,
   DEFAULT_LNG as lng,
@@ -9,10 +12,33 @@ import {
 } from '../constants';
 import './styles.css';
 
+const {error} = console;
+
 type State = {
   center: {
     lat: number,
     lng: number
+  },
+  stations: Array<{
+    address: string,
+    addressNumber: string,
+    altitude: string,
+    districtCode: string,
+    districtName: string,
+    id: number,
+    location: {
+      lat: number,
+      lon: number
+    },
+    name: string,
+    nearbyStations: Array<number>,
+    stationType: string,
+    zipCode: string
+  }>,
+  token: string,
+  user: {
+    lat?: number,
+    lng?: number
   },
   zoom: number
 };
@@ -20,20 +46,49 @@ type State = {
 export default class App extends React.Component<{}, State> {
   static State = {
     center: {lat, lng},
+    stations: undefined,
+    token: undefined,
     zoom: defaultZoom
   };
+
+  async dispatchAPICalls(): Promise<fetch> {
+    await this.getGeolocation();
+    await this.getToken();
+    await this.getStations();
+  }
+
+  async getStations(): Promise<fetch> {
+    try {
+      const {token} = this.state;
+      const response = await fetch(`${BASE_URL_STATIONS}${token}`);
+      const {stations} = await response.json();
+      this.setState({stations});
+    } catch(e) {
+      error(e);
+    }
+  }
+
+  async getToken (): Promise<fetch> {
+    try {
+      const response = await fetch(`${BASE_URL_TOKEN}&grant_type=client_credentials`);
+      const {access_token: token} = await response.json();
+      this.setState({token});
+    } catch(e) {
+      error(e);
+    }
+  }
 
   getGeolocation (): void {
     navigator.geolocation.getCurrentPosition(
       position => {
         const {coords: {latitude: lat, longitude: lng}} = position;
         const center = {lat, lng};
-        this.setState({center, zoom});
+        this.setState({center, user: center, zoom});
       },
-      error => {
+      e => {
         // This is basic
         // Use a better handle of the error!
-        console.error(error);
+        error(e);
       },
       {
         enableHighAccuracy: true,
@@ -44,7 +99,7 @@ export default class App extends React.Component<{}, State> {
   }
 
   componentDidMount(): void {
-    this.getGeolocation();
+    this.dispatchAPICalls();
   }
 
   render (): React$Element<*> {

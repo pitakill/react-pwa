@@ -8,11 +8,37 @@ import {
   GOOGLE_MAPS_API_KEY as key,
   GOOGLE_MAPS_LANG as language
 } from '../constants';
+import Station from '../Station';
+import User from '../User';
 
 type Props = {
+  center?: {
+    lat: number,
+    lng: number
+  },
   defaultCenter: {
     lat: number,
     lng: number
+  },
+  stations: Array<{
+    address: string,
+    addressNumber: string,
+    altitude: string,
+    districtCode: string,
+    districtName: string,
+    id: number,
+    location: {
+      lat: number,
+      lon: number
+    },
+    name: string,
+    nearbyStations: Array<number>,
+    stationType: string,
+    zipCode: string
+  }>,
+  user?: {
+    lat?: number,
+    lng?: number
   },
   zoom: number
 };
@@ -20,16 +46,31 @@ type Props = {
 export default class Map extends React.Component<Props> {
   static defaultProps = {
     defaultCenter: {lat, lng},
+    user: {
+      lat: 0,
+      lng: 0
+    },
     zoom
   }
 
+  drawStations(): Array<React$Element<any>> {
+    const {stations} = this.props;
+
+    return stations.map((station, key) => {
+      const {location: {lat, lon: lng}} = station;
+      return <Station {...{key, lat, lng}}></Station>
+    });
+  }
 
   render (): React$Element<GoogleMapReact> {
+    const {defaultCenter, center, user, zoom} = this.props;
     return (
       <GoogleMapReact
         bootstrapURLKeys={{key,language}}
-        {...this.props}
+        {...{defaultCenter, center, zoom}}
       >
+        <User {...user}/>
+        {this.props && this.props.stations ? this.drawStations() : null}
       </GoogleMapReact>
     );
   }
