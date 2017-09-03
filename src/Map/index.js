@@ -4,7 +4,7 @@ import GoogleMapReact from 'google-map-react';
 import {
   DEFAULT_LAT as lat,
   DEFAULT_LNG as lng,
-  DEFAULT_ZOOM as defaultZoom,
+  DEFAULT_ZOOM as zoom,
   GOOGLE_MAPS_API_KEY as key,
   GOOGLE_MAPS_LANG as language
 } from '../constants';
@@ -14,14 +14,15 @@ type Props = {
     lat: number,
     lng: number
   },
-  defaultZoom: number
+  zoom: number
 };
 
 export default class Map extends React.Component<Props> {
   static defaultProps = {
     defaultCenter: {lat, lng},
-    defaultZoom
+    zoom
   }
+
 
   render (): React$Element<GoogleMapReact> {
     return (
