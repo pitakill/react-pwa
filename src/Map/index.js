@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import GoogleMapReact from 'google-map-react';
 import {
@@ -8,13 +9,21 @@ import {
   GOOGLE_MAPS_LANG as language
 } from '../constants';
 
-export default class Map extends React.Component {
+type Props = {
+  defaultCenter: {
+    lat: number,
+    lng: number
+  },
+  defaultZoom: number
+};
+
+export default class Map extends React.Component<Props> {
   static defaultProps = {
     defaultCenter: {lat, lng},
     defaultZoom
   }
 
-  render () {
+  render (): React$Element<GoogleMapReact> {
     return (
       <GoogleMapReact
         bootstrapURLKeys={{key,language}}
