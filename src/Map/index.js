@@ -6,10 +6,10 @@ import {
   DEFAULT_LNG as lng,
   DEFAULT_ZOOM as zoom,
   GOOGLE_MAPS_API_KEY as key,
-  GOOGLE_MAPS_LANG as language
+  GOOGLE_MAPS_LANG as language,
+  USER_COLOR as color
 } from '../constants';
-import Station from '../Station';
-import User from '../User';
+import Marker from '../Marker';
 
 type Props = {
   center?: {
@@ -58,7 +58,7 @@ export default class Map extends React.Component<Props> {
 
     return stations.map((station, key) => {
       const {location: {lat, lon: lng}} = station;
-      return <Station {...{key, lat, lng}}></Station>
+      return <Marker {...{key, lat, lng}}></Marker>
     });
   }
 
@@ -69,7 +69,7 @@ export default class Map extends React.Component<Props> {
         bootstrapURLKeys={{key,language}}
         {...{defaultCenter, center, zoom}}
       >
-        <User {...user}/>
+        <Marker {...{...user, color}}/>
         {this.props && this.props.stations ? this.drawStations() : null}
       </GoogleMapReact>
     );

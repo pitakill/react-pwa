@@ -12,3 +12,6 @@ export const DEFAULT_ZOOM = 13;
 export const DETAIL_ZOOM = 17;
 export const GOOGLE_MAPS_API_KEY = 'AIzaSyBsuyux4fnHenyL-xSnEZTrNwkw_GsweeA';
 export const GOOGLE_MAPS_LANG = 'es';
+// UI
+export const USER_COLOR = '#4099ff';
+export const STATION_COLOR = 'peru';
