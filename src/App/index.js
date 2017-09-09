@@ -19,6 +19,7 @@ type State = {
     lat: number,
     lng: number
   },
+  positionId: number,
   stations: Array<{
     address: string,
     addressNumber: string,
@@ -46,6 +47,7 @@ type State = {
 export default class App extends React.Component<{}, State> {
   static State = {
     center: {lat, lng},
+    positionId: undefined,
     stations: undefined,
     token: undefined,
     zoom: defaultZoom
@@ -79,7 +81,7 @@ export default class App extends React.Component<{}, State> {
   }
 
   getGeolocation (): void {
-    navigator.geolocation.getCurrentPosition(
+    const positionId = navigator.geolocation.watchPosition(
       position => {
         const {coords: {latitude: lat, longitude: lng}} = position;
         const center = {lat, lng};
@@ -96,10 +98,16 @@ export default class App extends React.Component<{}, State> {
         timeout: 5000
       }
     );
+
+    this.setState({positionId});
   }
 
   componentDidMount(): void {
     this.dispatchAPICalls();
+  }
+
+  componentWillUnmount() {
+    navigator.geolocation.clearWatch(this.state.positionId);
   }
 
   render (): React$Element<*> {
