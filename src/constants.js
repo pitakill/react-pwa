@@ -1,5 +1,6 @@
 // Ecobici
-const BASE_URL = 'https://pubsbapi.smartbike.com';
+const PROXY = 'https://cors.io/?';
+const BASE_URL = `${PROXY}https://pubsbapi.smartbike.com`;
 const CLIENT_ID = '1098_52s53als5zgoos84ss0k0w0c4wwws04os8og4ksk000kg4soc4';
 const CLIENT_SECRET = '3h2zncw5c5q8gck48cw0cwswwcwggg880ws48w08wk0sc00w8g';
 export const BASE_URL_STATIONS = `${BASE_URL}/api/v1/stations.json?access_token=`;
