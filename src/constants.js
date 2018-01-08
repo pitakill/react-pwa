@@ -1,5 +1,5 @@
 // Ecobici
-const PROXY = 'https://cors.io/?';
+const PROXY = 'https://cors-anywhere.herokuapp.com/';
 const BASE_URL = `${PROXY}https://pubsbapi.smartbike.com`;
 const CLIENT_ID = '1098_52s53als5zgoos84ss0k0w0c4wwws04os8og4ksk000kg4soc4';
 const CLIENT_SECRET = '3h2zncw5c5q8gck48cw0cwswwcwggg880ws48w08wk0sc00w8g';
