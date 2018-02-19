@@ -1,5 +1,6 @@
 // @flow
 import React from 'react';
+import Info from '../Info';
 import Map from '../Map';
 import {
   BASE_URL_STATIONS,
@@ -12,7 +13,28 @@ import {
 } from '../constants';
 import './styles.css';
 
+import {actions ,store} from '../redux';
+import {bindActionCreators} from 'redux';
+import {connect, Provider} from 'react-redux';
+
 const {error} = console;
+
+type Station = {
+  address: string,
+  addressNumber: string,
+  altitude: string,
+  districtCode: string,
+  districtName: string,
+  id: number,
+  location: {
+    lat: number,
+    lon: number
+  },
+  name: string,
+  nearbyStations: Array<number>,
+  stationType: string,
+  zipCode: string
+};
 
 type State = {
   center: {
@@ -20,22 +42,7 @@ type State = {
     lng: number
   },
   positionId: number,
-  stations: Array<{
-    address: string,
-    addressNumber: string,
-    altitude: string,
-    districtCode: string,
-    districtName: string,
-    id: number,
-    location: {
-      lat: number,
-      lon: number
-    },
-    name: string,
-    nearbyStations: Array<number>,
-    stationType: string,
-    zipCode: string
-  }>,
+  stations: Array<Station>,
   token: string,
   user: {
     lat?: number,
@@ -44,7 +51,7 @@ type State = {
   zoom: number
 };
 
-export default class App extends React.Component<{}, State> {
+class App extends React.Component<{}, State> {
   static State = {
     center: {lat, lng},
     positionId: undefined,
@@ -110,11 +117,37 @@ export default class App extends React.Component<{}, State> {
     navigator.geolocation.clearWatch(this.state.positionId);
   }
 
+  printInfo(stations: Array<Station>) {
+    return stations.map((station, key) => <Info {...{key, ...station}}/>);
+  }
+
   render (): React$Element<*> {
     return (
       <div className='App-container'>
+      {
+        Boolean(this.state) && Boolean(this.state.stations) ?
+          this.printInfo(this.state.stations) : null
+      }
         <Map {...this.state}/>
       </div>
     );
   }
 }
+
+const mapStateToProps = (state) => ({...state});
+const mapDispatchToProps = (dispatch) => ({
+  actions: bindActionCreators(actions, dispatch)
+});
+
+const AppConnected = connect(
+  mapDispatchToProps,
+  mapStateToProps
+)(App);
+
+const Wrapper = () =>
+  <Provider {...{store}}>
+    <AppConnected/>
+  </Provider>
+;
+
+export default Wrapper;
