@@ -1,4 +1,3 @@
-// @flow
 import React from 'react';
 import Info from '../Info';
 import Map from '../Map';
@@ -13,7 +12,10 @@ import {
 } from '../constants';
 import './styles.css';
 
-import {actions ,store} from '../redux';
+import {
+  actions,
+  store
+} from '../redux';
 import {bindActionCreators} from 'redux';
 import {connect, Provider} from 'react-redux';
 
@@ -51,7 +53,15 @@ type State = {
   zoom: number
 };
 
-class App extends React.Component<{}, State> {
+type Props = {
+  actions: {
+    test: Function,
+    setStations: Function,
+    testAsync: Function
+  }
+};
+
+class App extends React.Component<Props, State> {
   static State = {
     center: {lat, lng},
     positionId: undefined,
@@ -71,7 +81,8 @@ class App extends React.Component<{}, State> {
       const {token} = this.state;
       const response = await fetch(`${BASE_URL_STATIONS}${token}`);
       const {stations} = await response.json();
-      this.setState({stations});
+      this.props.actions.setStations(stations)
+      //this.props.actions.testAsync()
     } catch(e) {
       error(e);
     }
@@ -111,6 +122,7 @@ class App extends React.Component<{}, State> {
 
   componentDidMount(): void {
     this.dispatchAPICalls();
+    this.props.actions.testAsync()
   }
 
   componentWillUnmount() {
@@ -125,10 +137,16 @@ class App extends React.Component<{}, State> {
     return (
       <div className='App-container'>
       {
-        Boolean(this.state) && Boolean(this.state.stations) ?
-          this.printInfo(this.state.stations) : null
+        Boolean(this.props) &&
+        Boolean(this.props.stations) &&
+        Boolean(this.props.stations.stations) ?
+          this.printInfo(this.props.stations.stations) :
+          null
       }
-        <Map {...this.state}/>
+        <Map
+          stations={this.props.stations.stations}
+          {...this.state}
+        />
       </div>
     );
   }
@@ -140,14 +158,13 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const AppConnected = connect(
-  mapDispatchToProps,
-  mapStateToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(App);
 
 const Wrapper = () =>
   <Provider {...{store}}>
     <AppConnected/>
   </Provider>
-;
 
 export default Wrapper;
